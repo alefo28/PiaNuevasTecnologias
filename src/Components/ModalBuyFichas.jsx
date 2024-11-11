@@ -34,10 +34,17 @@ export default function ModalBuyFichas({ fichas, setFichas, account }) {
 
   const handleBuy = async () => {
     // Lógica para la compra de fichas
-    buyFichas(amount, amount / 1000, account);
-    setFichas(fichas + parseInt(amount));
-    setAmount(0);
-    handleClose(); // Cierra el modal después de la compra
+    try {
+      await buyFichas(amount, amount / 1000, account);
+      setFichas(fichas + parseInt(amount));
+      setAmount(0);
+      alert("Transaccion exitosa...");
+      handleClose();
+    } catch (error) {
+      alert("Transaccion fallida...");
+      handleClose();
+    }
+    // Cierra el modal después de la compra
   };
 
   return (
@@ -58,12 +65,16 @@ export default function ModalBuyFichas({ fichas, setFichas, account }) {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Comprar Fichas
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 ,display: "flex", alignItems: "center" }}>
-          <img
+          <Typography
+            id="modal-modal-description"
+            sx={{ mt: 2, display: "flex", alignItems: "center" }}
+          >
+            <img
               src={img}
               alt="ETH logo"
               style={{ width: 20, height: 20, marginRight: 8 }}
-            /> 1000 Fichas = 1 ETH
+            />{" "}
+            1000 Fichas = 1 ETH
           </Typography>
 
           <Box sx={{ mt: 2 }}>
@@ -80,7 +91,6 @@ export default function ModalBuyFichas({ fichas, setFichas, account }) {
           </Box>
 
           <Box sx={{ mt: 2, display: "flex", alignItems: "center" }}>
-            
             <Typography variant="body2">
               {amount > 0 ? `${amount / 1000} ETH` : "0 ETH"}
             </Typography>

@@ -4,7 +4,7 @@ import Roulette from "./Components/Roulette";
 import Header from "./Components/header";
 import Bets from "./Components/Bets";
 import { set_provider } from "./conections/metamask";
-import { getFichas, MakeBet, WinBet } from "./conections/service";
+import { getFichas, LoseBet, setCustomer, WinBet } from "./conections/service";
 
 const data = [
   { option: "0", style: { backgroundColor: "green", textColor: "black" } },
@@ -84,6 +84,7 @@ function App() {
     });
 
     setAccount(accounts[0]);
+    await setCustomer(accounts[0])
     setFichas(await getFichas());
   };
 
@@ -136,6 +137,12 @@ function App() {
         (prevFichas) => prevFichas + apuestaGanada.cantidad * multiplier
       );
     } else {
+
+      const totalApuesta = apuestaSelected.reduce(
+        (acc, apuesta) => acc + apuesta.cantidad,
+        0
+      );
+      await LoseBet(totalApuesta, account);
       alert("Lo siento, no has ganado esta vez.");
     }
 
@@ -211,11 +218,6 @@ function App() {
       return; // Sale de la función sin realizar ninguna acción
     }
 
-    const totalApuesta = apuestaSelected.reduce(
-      (acc, apuesta) => acc + apuesta.cantidad,
-      0
-    );
-
     if (!mustSpin) {
       const newPrizeNumber = Math.floor(Math.random() * data.length);
       setPrizeNumber(newPrizeNumber);
@@ -224,7 +226,7 @@ function App() {
       /* console.log("La opción ganadora es:", winningOption);
       console.log(apuestaSelected); */
 
-      await MakeBet(totalApuesta, account);
+      
 
       setMustSpin(true);
     }
