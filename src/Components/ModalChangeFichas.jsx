@@ -39,7 +39,6 @@ export default function ModalChangeFichas({ fichas, setFichas, account }) {
 
   const handleChange = async () => {
     if (amount > 0 && amount <= fichas && amount <= max) {
-      console.log(account);
       // Si la cantidad es válida, se realiza el cambio (por ejemplo, se convierten las fichas a ETH)
       // const ethAmount = amount / 1000; // Suponiendo que 1000 fichas = 1 ETH
       await changeFichas(amount, account);

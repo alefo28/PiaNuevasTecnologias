@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 let web3 = null;
   // const contractABI = require("../Contracts/SmartGamble.json");
-  const contractAddress = "0x6f3C6b1b9Ef12ec88d3851c6A50e601E1f360e65";
+  const contractAddress = "0xcC1ee0B98247a0b17ca7d2AB5842e850c61716B1";
 
 export const Contract = set_provider().then(
   function (provider) {
@@ -50,7 +50,6 @@ export const getFichas = async (account) => {
 
     // Llama a getCustomer de forma segura
     const customer = await contractInstance.methods.getCustomer().call({from: account});
-    console.log("Customer data:", customer);
 
     if(customer == "") 
       throw new Error("Nombre vacio");
@@ -81,7 +80,6 @@ export const buyFichas = async (fichas, Eth, account) => {
       value: EthInWei,
     });
 
-    console.log("Transaction successful:", transaction);
     return transaction;
   } catch (error) {
     console.error("Error in buyFichas:", error.message);
@@ -103,7 +101,6 @@ export const changeFichas = async (fichas, account) => {
         from: account,
       });
 
-    console.log("Transaction successful:", transaction);
     return transaction;
   } catch (error) {
     console.error("Error in buyFichas:", error.message);
@@ -124,7 +121,6 @@ export const LoseBet = async (fichas, account) => {
         from: account,
       });
 
-    console.log("Bet placed successfully:", transaction);
     return transaction;
   } catch (error) {
     console.error("Error in LoseBet:", error.message);
@@ -145,7 +141,7 @@ export const WinBet = async (fichas, account) => {
         from: account,
       });
 
-    console.log("Bet placed successfully:", transaction);
+    ("Bet placed successfully:", transaction);
     return transaction;
   } catch (error) {
     console.error("Error in LoseBet:", error.message);
@@ -162,7 +158,6 @@ export const isOwner = async (account) => {
     }
     if (!account) throw new Error("Account address is undefined.");
 
-    console.log(account);
     // Llama a getCustomer de forma segura
     const owner = await contractInstance.methods.owner().call({from: account});
     if(account != owner)
@@ -199,7 +194,6 @@ export const maxToCash = async () => {
     // Llama al método buyChips del contrato
     const fichasMax = Number(await contractInstance.methods.geMinChipsToCash().call());
 
-    console.log("Fichas maximas para canjear de momento:", fichasMax);
     return fichasMax;
   } catch (error) {
     console.error("Error in maxToCash:", error.message);

@@ -55,8 +55,13 @@ function App() {
 
   const [account, setAccount] = useState("");
 
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    componentDidMount();
+    if (!isMounted) {
+      componentDidMount();
+      setIsMounted(true);
+    }
 
     // Función para manejar el cambio de cuenta
     const handleAccountsChanged = async (accounts) => {
@@ -65,12 +70,10 @@ function App() {
       } else {
         setAccount(null); // Si no hay cuentas conectadas
       }
-      try{
-        let {customer, chips} = await getFichas(accounts[0]);
-        console.log(customer);
-        console.log(chips);
+      try {
+        let { customer, chips } = await getFichas(accounts[0]);
         setFichas(chips);
-      }catch (e){
+      } catch (e) {
         await setCustomer(accounts[0]);
       }
     };
@@ -82,7 +85,7 @@ function App() {
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  }, []);
+  }, [isMounted]);
 
   const componentDidMount = async () => {
     let accounts = await (
@@ -91,14 +94,13 @@ function App() {
       method: "eth_requestAccounts",
     });
 
-    try{
-      let {customer, chips} = await getFichas(accounts[0]);
-      console.log(customer);
-      console.log(chips);
+    try {
+      let { customer, chips } = await getFichas(accounts[0]);
+
       setFichas(chips);
-    }catch (e){
+    } catch (e) {
       await setCustomer(accounts[0]);
-    }finally{
+    } finally {
       setAccount(accounts[0]);
     }
   };
@@ -139,38 +141,29 @@ function App() {
       apuestaPerdedora.push(apuesta);
     });
 
-    console.log( apuestaGanada);
-
-    console.log( apuestaPerdedora);
-
     let fichasGanadas = 0;
     let fichasPerdidas = 0;
 
     apuestaGanada.forEach((apuesta) => {
       let multiplier = getMultiplier(apuesta.value);
       fichasGanadas += apuesta.cantidad * multiplier;
-      console.log(fichasGanadas);
     });
 
     apuestaPerdedora.forEach((apuesta) => {
       fichasPerdidas += apuesta.cantidad;
     });
 
-    console.log(fichas);
-    console.log(fichasGanadas);
-    console.log(fichasPerdidas);
-
     setFichas((prevFichas) => prevFichas + fichasGanadas);
 
-    if(fichasGanadas > 0){
+    if (fichasGanadas > 0) {
       alert("¡Felicidades, has ganado!");
       await WinBet(fichasGanadas, account);
     }
-    if (fichasPerdidas > 0){
+    if (fichasPerdidas > 0) {
       await LoseBet(fichasPerdidas, account);
     }
-    if(fichasGanadas == 0 && fichasPerdidas > 0){
-        alert("Lo siento, no has ganado esta vez.");
+    if (fichasGanadas == 0 && fichasPerdidas > 0) {
+      alert("Lo siento, no has ganado esta vez.");
     }
     setSelected([]);
   };
@@ -247,12 +240,6 @@ function App() {
     if (!mustSpin) {
       const newPrizeNumber = Math.floor(Math.random() * data.length);
       setPrizeNumber(newPrizeNumber);
-
-      const winningOption = data[newPrizeNumber].option;
-      /* console.log("La opción ganadora es:", winningOption);
-      console.log(apuestaSelected); */
-
-      
 
       setMustSpin(true);
     }
