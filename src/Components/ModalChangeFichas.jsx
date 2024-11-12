@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import img from "../assets/pngwing.com.png";
-import { changeFichas } from "../conections/service";
+import { changeFichas, getFichas, maxToCash } from "../conections/service";
 
 const style = {
   position: "absolute",
@@ -21,21 +21,28 @@ const style = {
 export default function ModalChangeFichas({ fichas, setFichas, account }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(0);
-  const handleOpen = () => setOpen(true);
+  const [max, setMax] = useState(0);
+  const handleOpen = async () => {
+    //Checar el maximo de fichas a canjear
+    let max = await maxToCash();
+    setMax(max);
+    setOpen(true);
+  }
   const handleClose = () => setOpen(false);
 
   const handleAmountChange = (event) => {
     const value = event.target.value;
-    if (value === "" || (/^\d+$/.test(value) && parseInt(value) <= fichas)) {
+    if (value === "" || (/^\d+$/.test(value) && parseInt(value) <= parseInt(fichas))) {
       setAmount(value); // Solo actualiza si el valor es un número válido y menor o igual a las fichas disponibles
     }
   };
 
   const handleChange = async () => {
-    if (amount > 0 && amount <= fichas) {
+    if (amount > 0 && amount <= fichas && amount <= max) {
+      console.log(account);
       // Si la cantidad es válida, se realiza el cambio (por ejemplo, se convierten las fichas a ETH)
-      const ethAmount = amount / 1000; // Suponiendo que 1000 fichas = 1 ETH
-      await changeFichas(fichas, account);
+      // const ethAmount = amount / 1000; // Suponiendo que 1000 fichas = 1 ETH
+      await changeFichas(amount, account);
       setFichas(fichas - amount); // Descontamos las fichas
       handleClose(); // Cierra el modal después del cambio
     } else {
@@ -78,7 +85,7 @@ export default function ModalChangeFichas({ fichas, setFichas, account }) {
 
           <Box sx={{ mt: 2 }}>
             <Typography>
-              Ingresa la cantidad de fichas que deseas cambiar:
+              Ingresa la cantidad de fichas que deseas cambiar (Maximo: {max}):
             </Typography>
             <input
               type="text"

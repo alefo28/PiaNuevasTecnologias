@@ -1,0 +1,53 @@
+/* Reseteo básico de márgenes */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Contenedor principal que cubre toda la ventana */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;  /* Utilizamos toda la altura de la ventana */
+    background-color: #f4f4f9;  /* Fondo claro para la página */
+  }
+  
+  /* Contenedor del formulario centrado */
+  .form-container {
+    text-align: center;
+    background-color: #fff;  /* Fondo blanco para el formulario */
+    padding: 20px;
+    border-radius: 10px;  /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+    width: 300px;  /* Ancho del formulario */
+    box-sizing: border-box;  /* Asegura que el padding no afecte el ancho */
+  }
+  
+  /* Estilo para la etiqueta */
+  .label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  /* Estilo para la caja de texto */
+  .input-box {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  /* Efecto de enfoque (focus) en la caja de texto */
+  .input-box:focus {
+    border-color: #4CAF50;  /* Cambia el borde a verde al enfocar */
+  }
+  

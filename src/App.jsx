@@ -59,11 +59,19 @@ function App() {
     componentDidMount();
 
     // Función para manejar el cambio de cuenta
-    const handleAccountsChanged = (accounts) => {
+    const handleAccountsChanged = async (accounts) => {
       if (accounts.length > 0) {
         setAccount(accounts[0]);
       } else {
         setAccount(null); // Si no hay cuentas conectadas
+      }
+      try{
+        let {customer, chips} = await getFichas(accounts[0]);
+        console.log(customer);
+        console.log(chips);
+        setFichas(chips);
+      }catch (e){
+        await setCustomer(accounts[0]);
       }
     };
 
@@ -83,9 +91,16 @@ function App() {
       method: "eth_requestAccounts",
     });
 
-    setAccount(accounts[0]);
-    await setCustomer(accounts[0])
-    setFichas(await getFichas());
+    try{
+      let {customer, chips} = await getFichas(accounts[0]);
+      console.log(customer);
+      console.log(chips);
+      setFichas(chips);
+    }catch (e){
+      await setCustomer(accounts[0]);
+    }finally{
+      setAccount(accounts[0]);
+    }
   };
 
   const apuestasPosibles = {
@@ -108,44 +123,55 @@ function App() {
     const checkCategory = (category, option) => {
       return apuestasPosibles[category].includes(option);
     };
-    let apuestaGanada;
+    let apuestaGanada = [];
+    let apuestaPerdedora = [];
 
     // Recorrer las apuestas seleccionadas y comprobar si alguna de ellas es ganadora
-    const isWinner = apuestaSelected.some((apuesta) => {
+    apuestaSelected.some((apuesta) => {
       if (apuesta.value === toString(winningOption)) {
-        apuestaGanada = apuesta;
-        return true; // Si la apuesta seleccionada es un número individual, devuelve true
-      }
-
-      if (isNaN(parseFloat(apuesta.value)) || !isFinite(apuesta.value)) {
-        // Si apuesta.value NO es un número (o es un número en cadena)
+        apuestaGanada.push(apuesta); // Apuesta ganadora
+      } else if (isNaN(parseFloat(apuesta.value)) || !isFinite(apuesta.value)) {
+        // Si no es un número (es una categoría)
         if (checkCategory(apuesta.value, winningOption)) {
-          apuestaGanada = apuesta;
-          return true; // Si la opción ganadora está en una de las categorías, es ganadora
+          apuestaGanada.push(apuesta); // Apuesta ganadora (categoría)
         }
       }
-
-      return false;
+      apuestaPerdedora.push(apuesta);
     });
 
-    if (isWinner) {
-      const multiplier = getMultiplier(apuestaGanada.value);
+    console.log( apuestaGanada);
+
+    console.log( apuestaPerdedora);
+
+    let fichasGanadas = 0;
+    let fichasPerdidas = 0;
+
+    apuestaGanada.forEach((apuesta) => {
+      let multiplier = getMultiplier(apuesta.value);
+      fichasGanadas += apuesta.cantidad * multiplier;
+      console.log(fichasGanadas);
+    });
+
+    apuestaPerdedora.forEach((apuesta) => {
+      fichasPerdidas += apuesta.cantidad;
+    });
+
+    console.log(fichas);
+    console.log(fichasGanadas);
+    console.log(fichasPerdidas);
+
+    setFichas((prevFichas) => prevFichas + fichasGanadas);
+
+    if(fichasGanadas > 0){
       alert("¡Felicidades, has ganado!");
-
-      await WinBet(apuestaGanada.cantidad * multiplier, account);
-      setFichas(
-        (prevFichas) => prevFichas + apuestaGanada.cantidad * multiplier
-      );
-    } else {
-
-      const totalApuesta = apuestaSelected.reduce(
-        (acc, apuesta) => acc + apuesta.cantidad,
-        0
-      );
-      await LoseBet(totalApuesta, account);
-      alert("Lo siento, no has ganado esta vez.");
+      await WinBet(fichasGanadas, account);
     }
-
+    if (fichasPerdidas > 0){
+      await LoseBet(fichasPerdidas, account);
+    }
+    if(fichasGanadas == 0 && fichasPerdidas > 0){
+        alert("Lo siento, no has ganado esta vez.");
+    }
     setSelected([]);
   };
 

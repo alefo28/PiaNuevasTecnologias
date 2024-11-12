@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: None
 
 pragma solidity ^0.8.17;
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract PIANT_2024{
     address public owner;
@@ -20,10 +19,17 @@ contract PIANT_2024{
     }
 
     //Get Customer
-    function getCustomer() public view returns (Customer memory) {
+    function getCustomer() public  is_Registered view returns (string memory) {
         Customer memory customer = customers[msg.sender];
-        return customer;
+        return customer.name;
     }
+
+    //Get Customer
+    function getCustomerChips() public  is_Registered view returns (uint256) {
+        Customer memory customer = customers[msg.sender];
+        return customer.chips;
+    }
+
     //Set Customer
     function setCustomer(string memory name) public {
         require (keccak256(abi.encodePacked(customers[msg.sender].name)) == keccak256(abi.encodePacked("")), "La cuenta ya esta registrada");
@@ -81,7 +87,7 @@ contract PIANT_2024{
     function geMinChipsToCash() public view returns (uint256){
         require(address(this).balance > minimumBalance, "No hay fondos en este momento");
 
-        return uint256 (address(this).balance - minimumBalance) / chipsToTokenRatio;
+        return uint256 ((address(this).balance - minimumBalance) / chipsToTokenRatio)-1;
     }
 
     //Modifier: Is Registered
@@ -103,9 +109,8 @@ contract PIANT_2024{
 
         uint256 minChips = (address(this).balance - minimumBalance) / chipsToTokenRatio;
 
-        string memory minChipsMessage = string(abi.encodePacked("La cantidad minima para sacar son:", Strings.toString(minChips - 1)));
         // Verificar que el número de fichas solicitadas sea suficiente
-        require(minChips > chips, minChipsMessage);
+        require(minChips > chips, "No se pueden retirar esa cantidad de fichas");
 
         // Verificar si el contrato tiene suficiente saldo
         require(address(this).balance > (chips * chipsToTokenRatio) + minimumBalance, "Saldo insuficiente.");

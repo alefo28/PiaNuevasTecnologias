@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import img from "../assets/pngwing.com.png";
-import { buyFichas } from "../conections/service";
+import { buyFichas, getFichas } from "../conections/service";
 
 const style = {
   position: "absolute",
@@ -36,9 +36,10 @@ export default function ModalBuyFichas({ fichas, setFichas, account }) {
     // Lógica para la compra de fichas
     try {
       await buyFichas(amount, amount / 1000, account);
-      setFichas(fichas + parseInt(amount));
+      const {customer, chips} = await getFichas(account);
+      setFichas(chips);
       setAmount(0);
-      alert("Transaccion exitosa...");
+      alert("Transaccion exitosa para la cuenta " + customer.slice(0,5) + "..." + customer.slice(-5));
       handleClose();
     } catch (error) {
       alert("Transaccion fallida...");
