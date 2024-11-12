@@ -73,6 +73,8 @@ export const buyFichas = async (fichas, Eth, account) => {
 
     if (!account) throw new Error("Account address is undefined.");
 
+    const EthInWei = Eth * 10 ** 18;
+
     // Llama al método buyChips del contrato
     const transaction = await contractInstance.methods.buyChips(fichas).send({
       from: account,
