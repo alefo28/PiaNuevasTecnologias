@@ -92,11 +92,11 @@ function App() {
     try {
       let { customer, chips } = await getFichas(accounts[0]);
       setFichas(chips);
-
     } catch (e) {
-      alert("Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta");
+      alert(
+        "Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta"
+      );
       await setCustomer(accounts[0]);
-
     } finally {
       setAccount(accounts[0]);
     }
@@ -118,8 +118,12 @@ function App() {
   };
 
   const checkIfWinner = async (winningOption) => {
+
+    const winningNumber = parseInt(data[winningOption].option);      
+
     // Verificar si la apuesta seleccionada es válida para cada tipo de apuesta
     const checkCategory = (category, option) => {
+      
       return apuestasPosibles[category].includes(option);
     };
     let apuestaGanada = [];
@@ -127,11 +131,11 @@ function App() {
 
     // Recorrer las apuestas seleccionadas y comprobar si alguna de ellas es ganadora
     apuestaSelected.some((apuesta) => {
-      if (apuesta.value === toString(winningOption)) {
+      if (apuesta.value === toString(winningNumber)) {
         apuestaGanada.push(apuesta); // Apuesta ganadora
       } else if (isNaN(parseFloat(apuesta.value)) || !isFinite(apuesta.value)) {
-        // Si no es un número (es una categoría)
-        if (checkCategory(apuesta.value, winningOption)) {
+        // Si no es un número (es una categoría)                
+        if (checkCategory(apuesta.value, winningNumber)) {
           apuestaGanada.push(apuesta); // Apuesta ganadora (categoría)
         }
       }
@@ -237,7 +241,6 @@ function App() {
     if (!mustSpin) {
       const newPrizeNumber = Math.floor(Math.random() * data.length);
       setPrizeNumber(newPrizeNumber);
-
       setMustSpin(true);
     }
   };

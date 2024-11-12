@@ -13,7 +13,9 @@ export default ({ mustSpin, setMustSpin, prizeNumber, data , checkIfWinner}) => 
           prizeNumber={prizeNumber}
           data={data}
           onStopSpinning={() => {
-            setMustSpin(false);
+            setMustSpin(false);       
+            console.log(prizeNumber);
+                 
             checkIfWinner(prizeNumber)
           }}
           textDistance={80} // Aumenta la distancia de los números desde el centro
