@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Roulette from "./Components/Roulette";
 import Header from "./Components/header";
@@ -55,26 +55,21 @@ function App() {
 
   const [account, setAccount] = useState("");
 
-  const [isMounted, setIsMounted] = useState(false);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    if (!isMounted) {
+    if (!isMountedRef.current) {
       componentDidMount();
-      setIsMounted(true);
+      isMountedRef.current = true;
     }
 
     // Función para manejar el cambio de cuenta
     const handleAccountsChanged = async (accounts) => {
       if (accounts.length > 0) {
         setAccount(accounts[0]);
+        componentDidMount();
       } else {
         setAccount(null); // Si no hay cuentas conectadas
-      }
-      try {
-        let { customer, chips } = await getFichas(accounts[0]);
-        setFichas(chips);
-      } catch (e) {
-        await setCustomer(accounts[0]);
       }
     };
 
@@ -85,7 +80,7 @@ function App() {
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  }, [isMounted]);
+  }, []);
 
   const componentDidMount = async () => {
     let accounts = await (
@@ -96,10 +91,16 @@ function App() {
 
     try {
       let { customer, chips } = await getFichas(accounts[0]);
-
       setFichas(chips);
+      console.log("User: " + customer + " fichas: " + chips);
+
     } catch (e) {
+      alert("Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta");
       await setCustomer(accounts[0]);
+      // let { customer, chips } = await getFichas(accounts[0]);
+      // setFichas(chips);
+      // console.log("User: " + customer + " fichas: " + chips);
+
     } finally {
       setAccount(accounts[0]);
     }
