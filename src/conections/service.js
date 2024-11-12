@@ -1,7 +1,6 @@
 import Web3 from "web3";
 import { set_provider } from "./metamask";
 import contractABI from "../Contracts/SmartGamble.json";
-import { useNavigate } from "react-router-dom";
 
 let web3 = null;
   // const contractABI = require("../Contracts/SmartGamble.json");
@@ -87,7 +86,6 @@ export const buyFichas = async (fichas, Eth, account) => {
   }
 };
 
-//No esta agregando los ETH en el metamask
 export const changeFichas = async (fichas, account) => {
   try {
     const contractInstance = await Contract;
@@ -149,7 +147,7 @@ export const WinBet = async (fichas, account) => {
   }
 };
 
-export const isOwner = async (account) => {
+export const isOwner = async (account, navigate) => {
   try{
     // Espera a que Contract esté resuelto antes de llamar métodos
     const contractInstance = await Contract;
@@ -161,7 +159,7 @@ export const isOwner = async (account) => {
     // Llama a getCustomer de forma segura
     const owner = await contractInstance.methods.owner().call({from: account});
     if(account != owner)
-      useNavigate('/');
+      navigate('/');
     return owner;
   } catch(error){
     console.error("Error in isOwner:", error.message);
