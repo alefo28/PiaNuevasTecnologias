@@ -37,7 +37,7 @@ export default function ModalBuyFichas({ fichas, setFichas, account }) {
     try {
       await buyFichas(amount, amount / 1000, account);
       const {customer, chips} = await getFichas(account);
-      setFichas(chips);
+      setFichas((prevFichas) => prevFichas + Number(amount));
       setAmount(0);
       alert("Transaccion exitosa para la cuenta " + customer.slice(0,5) + "..." + customer.slice(-5));
       handleClose();
