@@ -24,9 +24,14 @@ export default function ModalChangeFichas({ fichas, setFichas, account }) {
   const [max, setMax] = useState(0);
   const handleOpen = async () => {
     //Checar el maximo de fichas a canjear
-    let max = await maxToCash();
-    setMax(max);
-    setOpen(true);
+    
+    try{
+      let max = await maxToCash();
+      setMax(max);
+      setOpen(true);
+    }catch{
+      alert("Esta funcion no esta disponible de momento, intente mas tarde.")
+    }
   }
   const handleClose = () => setOpen(false);
 
@@ -41,9 +46,13 @@ export default function ModalChangeFichas({ fichas, setFichas, account }) {
     if (amount > 0 && amount <= fichas && amount <= max) {
       // Si la cantidad es válida, se realiza el cambio (por ejemplo, se convierten las fichas a ETH)
       // const ethAmount = amount / 1000; // Suponiendo que 1000 fichas = 1 ETH
-      await changeFichas(amount, account);
-      setFichas(fichas - amount); // Descontamos las fichas
-      handleClose(); // Cierra el modal después del cambio
+      try{
+        await changeFichas(amount, account);
+        setFichas(fichas - amount); // Descontamos las fichas
+        handleClose(); // Cierra el modal después del cambio
+      }catch{
+        alert("Esta funcion no esta disponible de momento, intente mas tarde.")
+      }
     } else {
       alert("Ingresa una cantidad válida de fichas");
     }
