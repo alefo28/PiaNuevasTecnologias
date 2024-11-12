@@ -97,7 +97,7 @@ const AdminPage = () => {
             Ingrese fondos para el contrato:
           </label>
           <label htmlFor="" className="text-green-800 font-semibold">
-            Fondos disponibles: {balance}
+            Fondos disponibles: {balance} ETH
           </label>
           <input
             type="text"
