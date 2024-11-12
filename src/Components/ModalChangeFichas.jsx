@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import img from "../assets/pngwing.com.png";
-import { changeFichas, getFichas, maxToCash } from "../conections/service";
+import { changeFichas, maxToCash } from "../conections/service";
 
 const style = {
   position: "absolute",
