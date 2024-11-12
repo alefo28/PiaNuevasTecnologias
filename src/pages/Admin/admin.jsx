@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./admin.css"; // Asegúrate de importar el archivo CSS
 import { set_provider } from "../../conections/metamask";
-import { isOwner, ownerWithdraw, setFunds } from "../../conections/service";
+import { isOwner, ownerWithdraw, setFunds, setCustomer } from "../../conections/service";
 import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 
@@ -9,8 +9,9 @@ const AdminPage = () => {
   const [fondos, setFondos] = useState(0);
   const [account, setAccount] = useState("");
   const [balance, setBalance] = useState(null);
-  const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
+
+  const isMountedRef = useRef(false);
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
@@ -26,9 +27,9 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (!isMounted) {
+    if (!isMountedRef.current) {
       componentDidMount();
-      setIsMounted(true);
+      isMountedRef.current = true;
     }
 
     // Función para manejar el cambio de cuenta
@@ -38,10 +39,7 @@ const AdminPage = () => {
       } else {
         setAccount(null); // Si no hay cuentas conectadas
       }
-      try {
-      } catch (e) {
-        await setCustomer(accounts[0]);
-      }
+      componentDidMount();
     };
 
     // Añadir el listener para cuando cambie la cuenta
@@ -51,7 +49,7 @@ const AdminPage = () => {
     return () => {
       window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     };
-  }, [isMounted]);
+  }, []);
 
   const componentDidMount = async () => {
     let accounts = await (
@@ -64,11 +62,11 @@ const AdminPage = () => {
     const balanceWei = await web3.eth.getBalance(accounts[0]);
     const balanceETH = web3.utils.fromWei(balanceWei, "ether");
     setBalance(balanceETH);
-
+    
     try {
       await isOwner(accounts[0], navigate);
     } catch (e) {
-      await setCustomer(accounts[0]);
+      navigate("/");
     } finally {
       setAccount(accounts[0]);
     }

@@ -83,6 +83,7 @@ function App() {
   }, []);
 
   const componentDidMount = async () => {
+    console.log("Hola");
     let accounts = await (
       await set_provider()
     ).request({
@@ -92,13 +93,18 @@ function App() {
     try {
       let { customer, chips } = await getFichas(accounts[0]);
       setFichas(chips);
+      setAccount(accounts[0]);
     } catch (e) {
       alert(
         "Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta"
       );
-      await setCustomer(accounts[0]);
-    } finally {
-      setAccount(accounts[0]);
+      try{
+        await setCustomer(accounts[0]);
+        setAccount(accounts[0]);
+      }catch{
+        setAccount("Bienvenido, por favor registre su cuenta para participar.");
+        componentDidMount();
+      }
     }
   };
 
