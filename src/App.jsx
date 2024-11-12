@@ -92,14 +92,10 @@ function App() {
     try {
       let { customer, chips } = await getFichas(accounts[0]);
       setFichas(chips);
-      console.log("User: " + customer + " fichas: " + chips);
 
     } catch (e) {
       alert("Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta");
       await setCustomer(accounts[0]);
-      // let { customer, chips } = await getFichas(accounts[0]);
-      // setFichas(chips);
-      // console.log("User: " + customer + " fichas: " + chips);
 
     } finally {
       setAccount(accounts[0]);

@@ -3,8 +3,8 @@ import { set_provider } from "./metamask";
 import contractABI from "../Contracts/SmartGamble.json";
 
 let web3 = null;
-  // const contractABI = require("../Contracts/SmartGamble.json");
-  const contractAddress = "0xcC1ee0B98247a0b17ca7d2AB5842e850c61716B1";
+// const contractABI = require("../Contracts/SmartGamble.json");
+const contractAddress = "0xcC1ee0B98247a0b17ca7d2AB5842e850c61716B1";
 
 export const Contract = set_provider().then(
   function (provider) {
@@ -24,13 +24,11 @@ export const setCustomer = async (account) => {
     // Verifica que el contrato esté inicializado
     // Verifica que la cuenta esté definida
     if (!account) throw new Error("Account address is undefined.");
-  
+
     // Llama a la función setCustomer con el envío de transacción
-    const receipt = await contractInstance.methods
-      .setCustomer(account)
-      .send({ 
-        from: account,
-      });
+    const receipt = await contractInstance.methods.setCustomer(account).send({
+      from: account,
+    });
     return receipt;
   } catch (error) {
     console.error("Error en setCustomer:", error.message);
@@ -48,15 +46,18 @@ export const getFichas = async (account) => {
     if (!account) throw new Error("Account address is undefined.");
 
     // Llama a getCustomer de forma segura
-    const customer = await contractInstance.methods.getCustomer().call({from: account});
+    const customer = await contractInstance.methods
+      .getCustomer()
+      .call({ from: account });
 
-    if(customer == "") 
-      throw new Error("Nombre vacio");
+    if (customer == "") throw new Error("Nombre vacio");
 
-    let chips = (await contractInstance.methods.getCustomerChips().call({from: account}));
+    let chips = await contractInstance.methods
+      .getCustomerChips()
+      .call({ from: account });
     chips = chips.toString();
 
-    return {customer, chips};
+    return { customer, chips };
   } catch (error) {
     console.error("Error in getFichas:", error.message);
     // Maneja el error y retorna un valor predeterminado o un mensaje adecuado
@@ -72,7 +73,6 @@ export const buyFichas = async (fichas, Eth, account) => {
 
     if (!account) throw new Error("Account address is undefined.");
 
-    const EthInWei = Eth * 10 ** 18;
     // Llama al método buyChips del contrato
     const transaction = await contractInstance.methods.buyChips(fichas).send({
       from: account,
@@ -139,7 +139,7 @@ export const WinBet = async (fichas, account) => {
         from: account,
       });
 
-    ("Bet placed successfully:", transaction);
+    "Bet placed successfully:", transaction;
     return transaction;
   } catch (error) {
     console.error("Error in LoseBet:", error.message);
@@ -148,7 +148,7 @@ export const WinBet = async (fichas, account) => {
 };
 
 export const isOwner = async (account, navigate) => {
-  try{
+  try {
     // Espera a que Contract esté resuelto antes de llamar métodos
     const contractInstance = await Contract;
     if (!contractInstance) {
@@ -157,17 +157,39 @@ export const isOwner = async (account, navigate) => {
     if (!account) throw new Error("Account address is undefined.");
 
     // Llama a getCustomer de forma segura
-    const owner = await contractInstance.methods.owner().call({from: account});
-    if(account != owner)
-      navigate('/');
+    const owner = await contractInstance.methods
+      .owner()
+      .call({ from: account });
+
+    if (account.toUpperCase() != owner.toUpperCase()) navigate("/");
     return owner;
-  } catch(error){
+  } catch (error) {
     console.error("Error in isOwner:", error.message);
   }
-}
+};
 
 export const setFunds = async (account, fundsInEth) => {
-  try{
+  try {
+    // Espera a que Contract esté resuelto antes de llamar métodos
+    const contractInstance = await Contract;
+    if (!contractInstance) {
+      throw new Error("Contract instance not initialized.");
+    }
+    if (!account) throw new Error("Account address is undefined.");
+    const EthInWei = fundsInEth * 10 ** 18;
+
+    // Llama a getCustomer de forma segura
+    const receipt = await contractInstance.methods
+      .setFunds()
+      .send({ from: account, value: EthInWei });
+    return receipt;
+  } catch (error) {
+    console.error("Error in isOwner:", error.message);
+  }
+};
+
+export const ownerWithdraw = async (account) => {
+  try {
     // Espera a que Contract esté resuelto antes de llamar métodos
     const contractInstance = await Contract;
     if (!contractInstance) {
@@ -176,12 +198,14 @@ export const setFunds = async (account, fundsInEth) => {
     if (!account) throw new Error("Account address is undefined.");
 
     // Llama a getCustomer de forma segura
-    const receipt = await contractInstance.methods.setFunds().send({from: account, value: fundsInEth});
+    const receipt = await contractInstance.methods
+      .ownerWithdraw()
+      .send({ from: account });
     return receipt;
-  } catch(error){
-    console.error("Error in isOwner:", error.message);
+  } catch (error) {
+    console.error("Error:", error.message);
   }
-}
+};
 
 export const maxToCash = async () => {
   try {
@@ -190,11 +214,13 @@ export const maxToCash = async () => {
       throw new Error("Contract instance not initialized.");
 
     // Llama al método buyChips del contrato
-    const fichasMax = Number(await contractInstance.methods.geMinChipsToCash().call());
+    const fichasMax = Number(
+      await contractInstance.methods.geMinChipsToCash().call()
+    );
 
     return fichasMax;
   } catch (error) {
     console.error("Error in maxToCash:", error.message);
     throw error; // Para manejar el error externamente si es necesario
   }
-}
+};
