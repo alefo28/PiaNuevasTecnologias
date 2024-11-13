@@ -160,13 +160,15 @@ function App() {
     setFichas((prevFichas) => prevFichas + fichasGanadas);
 
     if (fichasGanadas > 0) {
-      const audio3 = new Audio("public/GruntBirthdayParty.mp3");
+      const audio3 = new Audio("/GruntBirthdayParty.mp3");
+      audio3.volume = 0.1;
       await audio3.play();
       alert("¡Felicidades, has ganado!");
       await WinBet(fichasGanadas, account);
     }
     if (fichasGanadas == 0 && fichasPerdidas > 0) {
-      const audio4 = new Audio("public/WrongBuzzer.mp3");
+      const audio4 = new Audio("/WrongBuzzer.mp3");
+      audio4.volume = 0.1;
       await audio4.play();
       alert("Lo siento, no has ganado esta vez.");
     }
@@ -256,8 +258,9 @@ function App() {
     }
   };
 
-  const audio = new Audio("public/RouletteSound.mp3");
+  const audio = new Audio("/RouletteSound.mp3");
   const playSoundWithLimit = (duration) => {
+    audio.volume = 0.1;
     audio.play();
 
     // Detiene el sonido después de que pase el tiempo de duración especificado

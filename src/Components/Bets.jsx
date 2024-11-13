@@ -138,6 +138,7 @@ export default function Bets({
   const handleFichaClick = (ficha) => {
     
     if (canSelectFicha(ficha, fichasUser)) {
+      audio.volume = 0.1;
       audio.play();
       setSelectedFicha((prevSelectedFicha) => {
         // Lógica para manejar el cambio de ficha seleccionada
@@ -163,8 +164,8 @@ export default function Bets({
     setSelected([]); // Restablece las apuestas
   };
 
-  const audio = new Audio('public/minecraftdropitem.mp3');
-  const audio2 = new Audio('public/MinecraftItemPickup.mp3');
+  const audio = new Audio('/minecraftdropitem.mp3');
+  const audio2 = new Audio('/MinecraftItemPickup.mp3');
   const playSoundWithLimit = (duration) => {
     audio2.play();
   
