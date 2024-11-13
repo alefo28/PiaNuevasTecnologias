@@ -4,7 +4,7 @@ import contractABI from "../Contracts/SmartGamble.json";
 
 let web3 = null;
 // const contractABI = require("../Contracts/SmartGamble.json");
-const contractAddress = "0xE36efb01d683137745dc959E98f4C6E07849d7f5";
+const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
 export const Contract = set_provider().then(
   function (provider) {

@@ -19,7 +19,7 @@ export default ({ mustSpin, setMustSpin, prizeNumber, data , checkIfWinner}) => 
             checkIfWinner(prizeNumber)
           }}
           textDistance={80} // Aumenta la distancia de los números desde el centro
-          spinDuration={1} // Aumenta la duración del giro para hacerla más visible
+          spinDuration={0.8} // Aumenta la duración del giro para hacerla más visible
           innerRadius={40}
           innerBorderColor="#282216"
           outerBorderColor="#282216"

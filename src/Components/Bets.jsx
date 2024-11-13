@@ -11,12 +11,9 @@ export default function Bets({
 }) {
   const fichasPosibles = [1, 5, 25, 50, 100, 200, 500, 1000];
 
-  /* const [fichasIniciales, setFichasIniciales] = useState(fichasUser);
-  useEffect(() => {
-    setFichasIniciales(fichasUser);
-  }, [fichasUser]); */
 
   const handleSelect = (value) => {
+    playSoundWithLimit(1000)
     if (selectedFicha !== 0 && fichasUser >= selectedFicha) {
       setSelected((prevSelected) => {
         const apuestaExistente = prevSelected.find(
@@ -139,7 +136,9 @@ export default function Bets({
 
   // Función para manejar el clic en una ficha
   const handleFichaClick = (ficha) => {
+    
     if (canSelectFicha(ficha, fichasUser)) {
+      audio.play();
       setSelectedFicha((prevSelectedFicha) => {
         // Lógica para manejar el cambio de ficha seleccionada
         if (prevSelectedFicha === ficha) {
@@ -163,6 +162,19 @@ export default function Bets({
     setFichas((prevFichas) => prevFichas + totalApuesta);
     setSelected([]); // Restablece las apuestas
   };
+
+  const audio = new Audio('public/minecraftdropitem.mp3');
+  const audio2 = new Audio('public/MinecraftItemPickup.mp3');
+  const playSoundWithLimit = (duration) => {
+    audio2.play();
+  
+    // Detiene el sonido después de que pase el tiempo de duración especificado
+    setTimeout(() => {
+      audio2.pause();
+      audio2.currentTime = 0; // Reinicia el sonido al inicio
+    }, duration);
+  };
+
 
   return (
     <div className=" flex justify-center w-full">

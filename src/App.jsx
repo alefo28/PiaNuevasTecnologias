@@ -83,7 +83,6 @@ function App() {
   }, []);
 
   const componentDidMount = async () => {
-    console.log("Hola");
     let accounts = await (
       await set_provider()
     ).request({
@@ -98,10 +97,10 @@ function App() {
       alert(
         "Tienes una transacción pendiente!!\nInicia sesion con tu nueva cuenta"
       );
-      try{
+      try {
         await setCustomer(accounts[0]);
         setAccount(accounts[0]);
-      }catch{
+      } catch {
         setAccount("Bienvenido, por favor registre su cuenta para participar.");
         componentDidMount();
       }
@@ -124,12 +123,10 @@ function App() {
   };
 
   const checkIfWinner = async (winningOption) => {
-
-    const winningNumber = parseInt(data[winningOption].option);      
+    const winningNumber = parseInt(data[winningOption].option);
 
     // Verificar si la apuesta seleccionada es válida para cada tipo de apuesta
     const checkCategory = (category, option) => {
-      
       return apuestasPosibles[category].includes(option);
     };
     let apuestaGanada = [];
@@ -140,7 +137,7 @@ function App() {
       if (apuesta.value === toString(winningNumber)) {
         apuestaGanada.push(apuesta); // Apuesta ganadora
       } else if (isNaN(parseFloat(apuesta.value)) || !isFinite(apuesta.value)) {
-        // Si no es un número (es una categoría)                
+        // Si no es un número (es una categoría)
         if (checkCategory(apuesta.value, winningNumber)) {
           apuestaGanada.push(apuesta); // Apuesta ganadora (categoría)
         }
@@ -163,15 +160,20 @@ function App() {
     setFichas((prevFichas) => prevFichas + fichasGanadas);
 
     if (fichasGanadas > 0) {
+      const audio3 = new Audio("public/GruntBirthdayParty.mp3");
+      await audio3.play();
       alert("¡Felicidades, has ganado!");
       await WinBet(fichasGanadas, account);
+    }
+    if (fichasGanadas == 0 && fichasPerdidas > 0) {
+      const audio4 = new Audio("public/WrongBuzzer.mp3");
+      await audio4.play();
+      alert("Lo siento, no has ganado esta vez.");
     }
     if (fichasPerdidas > 0) {
       await LoseBet(fichasPerdidas, account);
     }
-    if (fichasGanadas == 0 && fichasPerdidas > 0) {
-      alert("Lo siento, no has ganado esta vez.");
-    }
+    
     setSelected([]);
   };
 
@@ -248,7 +250,21 @@ function App() {
       const newPrizeNumber = Math.floor(Math.random() * data.length);
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
+      setTimeout(() => {
+        playSoundWithLimit(9000);
+      }, 550);
     }
+  };
+
+  const audio = new Audio("public/RouletteSound.mp3");
+  const playSoundWithLimit = (duration) => {
+    audio.play();
+
+    // Detiene el sonido después de que pase el tiempo de duración especificado
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 0; // Reinicia el sonido al inicio
+    }, duration);
   };
 
   return (
