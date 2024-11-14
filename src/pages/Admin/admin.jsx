@@ -9,7 +9,11 @@ const AdminPage = () => {
   const [fondos, setFondos] = useState(0);
   const [account, setAccount] = useState("");
   const [balance, setBalance] = useState(null);
+  const [contractBalance, setContractBalance] = useState(null);
+
   const navigate = useNavigate();
+
+  const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;
 
   const isMountedRef = useRef(false);
 
@@ -60,8 +64,11 @@ const AdminPage = () => {
     const web3 = new Web3(window.ethereum);
 
     const balanceWei = await web3.eth.getBalance(accounts[0]);
+    const contractBalanceWei = await web3.eth.getBalance(contractAddress)
     const balanceETH = web3.utils.fromWei(balanceWei, "ether");
+    const contractBalanceETH = web3.utils.fromWei(contractBalanceWei, "ether");
     setBalance(balanceETH);
+    setContractBalance(contractBalanceETH);
     
     try {
       await isOwner(accounts[0], navigate);
@@ -98,6 +105,9 @@ const AdminPage = () => {
           </label>
           <label htmlFor="" className="text-green-800 font-semibold">
             Fondos disponibles: {balance} ETH
+          </label>
+          <label htmlFor="" className="text-green-800 font-semibold">
+            Fondos del Smart Contract: {contractBalance} ETH
           </label>
           <input
             type="text"
