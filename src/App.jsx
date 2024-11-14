@@ -274,7 +274,7 @@ function App() {
     <>
       <div className=" min-h-screen bg-green-800 ">
         <Header fichas={fichas} account={account} setFichas={setFichas} />
-        <div className="flex mt-10 mx-10 items-center justify-center">
+        <div className="responsive flex mt-10 mx-10 items-center justify-center">
           <Roulette
             mustSpin={mustSpin}
             setMustSpin={setMustSpin}
@@ -293,7 +293,7 @@ function App() {
         </div>
         <div className="flex justify-center">
           <button
-            className="px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded border-white"
+            className="btn-responsive px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded border-white"
             onClick={handleSpinClick}
           >
             APOSTAR

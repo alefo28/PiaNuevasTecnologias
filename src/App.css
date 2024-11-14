@@ -2,3 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@media (max-width: 1030px) {
+    .responsive {
+      flex-direction: column;
+    }
+    .btn-responsive{
+      margin-bottom: 40px;
+    }
+  }
